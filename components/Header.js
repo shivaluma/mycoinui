@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
-const Header = () => {
+const Header = ({container = true, right: HeaderRight = null}) => {
 
   return <div className="w-full px-8 bg-white py-7">
-    <div className="container flex items-center h-full ">
+    <div className={`flex items-center h-full ${container ? "container" : ""}`}>
       <Link href="/">
         <Image
           src="/logo.png"
@@ -11,6 +11,9 @@ const Header = () => {
           width={122}
           height={33}
         /></Link>
+
+          {HeaderRight  && <HeaderRight className="self-end" />}
+        
     </div>
   </div>
 }

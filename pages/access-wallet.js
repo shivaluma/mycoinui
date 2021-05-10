@@ -75,8 +75,8 @@ export default function CreateWallet() {
           <Header />
 
           <div className="pb-16 mt-16 text-center">
-            <h1 className="text-3xl font-light">Get a New Wallet</h1>
-            <span className="font-light text-gray-600">Already have a wallet ? Access My Wallet</span>
+            <h1 className="text-3xl font-light">Access Your Wallet</h1>
+            <span className="font-light text-gray-600">Do not have a wallet ? Create New</span>
 
 
 
