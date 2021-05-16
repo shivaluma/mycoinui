@@ -1,15 +1,17 @@
 import Link from 'next/link'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Header from '../../components/Header'
 import {
   ChipIcon,
   QrcodeIcon,
   CurrencyDollarIcon,
   InformationCircleIcon,
+  RefreshIcon,
 } from '@heroicons/react/outline'
 import { useWallet } from '../../util/store'
-import {useRouter} from 'next/router'
+import { useRouter } from 'next/router'
 import instance from '../../util/axios'
+import { last } from 'lodash'
 const gridStyle = {
   gridColumnGap: 0,
   gridTemplateColumns: '270px 1fr',
@@ -41,23 +43,58 @@ const HeaderRight = ({ className }) => {
 export default function Dashboard() {
   const { wallet, change } = useWallet()
   const router = useRouter()
+  const [lastestBlock, setLatestBlock] = useState(null)
+  const [formValue, setForm] = useState({ amount: 0, address: '', error: "" })
   useEffect(() => {
     if (!wallet.address) {
-        router.replace('/access-wallet')
+      router.replace('/access-wallet')
     }
     ;(async () => {
+      refreshBalance()
       try {
-        const { data } = await instance.get('operator/' + wallet.address + '/balance')
-        change(data)
+        const { data } = await instance.get('/blockchain/blocks/latest')
+        setLatestBlock(data)
       } catch (err) {}
     })()
   }, [wallet?.address])
+
+  const refreshBalance = async () => {
+    try {
+      const { data } = await instance.get('operator/' + wallet.address + '/balance')
+      change(data)
+    } catch (err) {}
+  }
+
+  const handleChangeForm = useCallback((ev) => {
+    setForm((prev) => ({ ...prev, [ev.target.name]: ev.target.value }))
+  }, [])
+
+  
+
+  const onFormSubmit = useCallback(async(ev) => {
+    ev.preventDefault()
+
+    try {
+      console.log(formValue)
+
+      const {data} = await instance.post('/operator/wallets/transactions', {
+        fromAddress : wallet.address,
+        toAddress: formValue.address,
+        amount: Number(formValue.amount)
+      })
+      console.log(data)
+    }
+    catch (err) {
+      setForm(prev => ({...prev, error : err.response.data}))
+    }
+
+  }, [])
   return (
     <div className="flex flex-col h-screen">
       <Header container={false} right={HeaderRight} />
 
-      <div className="grid flex-1 w-full bg-gray-200" style={gridStyle}>
-        <div className="w-full h-full p-8 bg-white shadow-sm">
+      <div className="grid flex-1 w-full bg-gray-200">
+        {/* <div className="w-full h-full p-8 bg-white shadow-sm">
           <div className="flex items-center h-20 text-gray-700">
             <ChipIcon className="w-6 mr-2 text-xl" /> <span className="text-lg">Dashboard</span>
           </div>
@@ -66,7 +103,7 @@ export default function Dashboard() {
             <CurrencyDollarIcon className="w-6 mr-2 text-xl" />{' '}
             <span className="text-lg">Send</span>
           </div>
-        </div>
+        </div> */}
         <div className="flex flex-col p-6" style={contentBackground}>
           <div className="grid w-full grid-cols-3 gap-5">
             <div
@@ -86,7 +123,13 @@ export default function Dashboard() {
               <CurrencyDollarIcon className="flex-shrink-0 w-12 h-12 mt-2 mr-5 text-white" />
               <div className="flex flex-col text-white">
                 <span className="text-lg font-semibold">Balance</span>
-                <span className="text-2xl font-light text-white break-all">{wallet.balance}</span>
+                <span className="flex items-center text-2xl font-light text-white break-all">
+                  {wallet.balance}{' '}
+                  <RefreshIcon
+                    className="w-6 h-6 ml-2 text-xs cursor-pointer"
+                    onClick={refreshBalance}
+                  />{' '}
+                </span>
               </div>
             </div>
             <div
@@ -96,19 +139,57 @@ export default function Dashboard() {
               <InformationCircleIcon className="w-12 h-12 mt-2 mr-5 text-white" />
               <div className="flex flex-col text-white">
                 <span className="text-lg font-semibold">Network</span>
-                <span className="text-sm text-white break-all">Deo biet ghi gi</span>
+                <span className="text-sm text-white break-all">
+                  Latest Block : #{lastestBlock?.index || 0}
+                </span>
               </div>
             </div>
           </div>
-
           <div className="grid flex-1 w-full grid-cols-3 gap-5 mt-5">
-            <div className="bg-white rounded-md"></div>
-            <div className="h-40 col-span-2 bg-white rounded-md "></div>
+            <div className="p-6 bg-white rounded-md">
+              <span className="font-semibold text-md">My Transactions</span>
+            </div>
+            <div className="flex flex-col col-span-2 p-6 bg-white rounded-md">
+              <span className="font-semibold text-md">Create Transaction</span>
+
+              <span className="mt-4 text-xs font-semibold">Amount</span>
+
+              <form className="flex flex-col" onSubmit={onFormSubmit}>
+                <input
+                  className="px-4 py-2 mt-1 border border-gray-200 rounded-md shadow-sm overflow-ellipsis focus:outline-none"
+                  defaultValue={1}
+                  autoFocus
+                  name="amount"
+                  type="number"
+                  min={1}
+                  onChange={handleChangeForm}
+                  required
+                ></input>
+
+                <span className="mt-8 text-xs font-semibold">Address</span>
+
+                <input
+                  className="px-4 py-2 mt-1 border border-gray-200 rounded-md shadow-sm overflow-ellipsis focus:outline-none"
+                  placeholder="Please enter receiver address"
+                  type="text"
+                  name="address"
+                  defaultValue={formValue.address}
+                  onChange={handleChangeForm}
+                  required
+                  pattern="^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$"
+                ></input>
+
+                <button type="submit" className="px-10 py-6 mx-auto mt-8 font-semibold text-white bg-green-600 rounded-md ring-2">
+                  Confirm
+                </button>
+
+
+                {formValue.error && <span className="mt-5 text-sm font-semibold text-center text-red-500">{formValue.error}</span>}
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
   )
 }
-
-
