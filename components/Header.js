@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-const Header = ({container = true, right: HeaderRight = null}) => {
+const Header = ({container = true, right: HeaderRight = null, left: HeaderLeft = false}) => {
 
   return <div className="w-full px-8 bg-white py-7">
     <div className={`flex items-center h-full ${container ? "container" : ""}`}>
@@ -11,6 +11,8 @@ const Header = ({container = true, right: HeaderRight = null}) => {
           width={122}
           height={33}
         /></Link>
+
+        {HeaderLeft && <span className="ml-2 text-3xl font-light text-gray-600">Explorer</span>}
 
           {HeaderRight  && <HeaderRight className="self-end" />}
         

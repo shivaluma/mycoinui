@@ -898,6 +898,11 @@ fraction.js@^4.0.13:
   resolved "https://registry.yarnpkg.com/fraction.js/-/fraction.js-4.0.13.tgz#3c1c315fa16b35c85fffa95725a36fa729c69dfe"
   integrity sha512-E1fz2Xs9ltlUp+qbiyx9wmt2n9dRzPsS11Jtdb8D2o+cC7wr9xkkKsVKJuBX0ST+LVS+LhLO+SbLJNtfWcJvXA==
 
+fromnow@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/fromnow/-/fromnow-3.0.1.tgz#ffa46a8e233e05721ba4c1ae269e92123f6510d4"
+  integrity sha512-yiLiFONFTvJlP4NaaYcJclCExN4wa2EbWJ9cCXqKcFdxkBmiqlDhzGb/yJ8HtvhNh9td7AUwyCW9w9RrLi429A==
+
 fs-extra@^9.1.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.1.0.tgz#5954460c764a8da2094ba3554bf839e6b9a7c86d"
