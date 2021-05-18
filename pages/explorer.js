@@ -50,7 +50,7 @@ export default function Explorer({ blocks, transactions }) {
             {transactions?.length > 0 && transactions.map(tx => <div key={tx.id} className="flex w-full mt-6">
               <div className="pr-2 text-sm text-gray-800 break-all" style={{ width: "40%" }}>{tx.hash}</div>
               <div className="text-sm text-gray-800" style={{ width: "25%" }}>{fromnow(Number(tx.time) * 1000)}</div>
-              <div className="text-sm text-gray-800 break-all" style={{ width: "25%" }}>{tx.data.outputs[0].amount}</div>
+              <div className="text-sm text-gray-800 break-all" style={{ width: "25%" }}>{tx.data.inputs.reduce((prev, cur) => prev.amount > Number(cur.amount) ? prev : cur, {amount: 0}).amount}</div>
               <div className="text-sm text-gray-800" style={{ width: "10%" }}>{tx.type}</div>
             </div>)}
           </div>
