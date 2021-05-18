@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
-const Header = ({container = true, right: HeaderRight = null, left: HeaderLeft = false}) => {
+const Header = ({container = true, right: HeaderRight = null, left: HeaderLeft = false, isExplorer}) => {
 
   return <div className="w-full px-8 bg-white py-7">
     <div className={`flex items-center h-full ${container ? "container" : ""}`}>
-      <Link href="/">
+      <Link href={isExplorer ? "/explorer" : '/'}>
         <Image
           src="/logo.png"
           alt="Picture of the author"

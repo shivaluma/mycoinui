@@ -2,6 +2,7 @@ import fromnow from 'fromnow'
 import Header from '../../../components/Header'
 import instance from '../../../util/axios'
 import { useRouter } from 'next/router'
+import { ArrowRightIcon } from '@heroicons/react/outline'
 
 export default function Block({ data }) {
   
@@ -13,7 +14,7 @@ export default function Block({ data }) {
   return (
     <div className="min-h-screen bg-white">
       <div>
-        <Header left />
+        <Header left isExplorer/>
         {/* {transactions.slice(0,8).map(tx => <div key={tx.hash} className="px-4 py-3 mt-2 mb-2 text-sm text-gray-600 break-all bg-gray-200 rounded-lg">
                 Hash : {tx.hash}
                 </div>) } */}
@@ -62,13 +63,34 @@ export default function Block({ data }) {
             <span className="mt-8 text-xl font-medium text-gray-700">Transactions of this block</span>
             {data.transactions.length > 0 && data.transactions.map((tx,index) => <div key={tx.hash} className="flex flex-col w-full px-4 py-2 mt-3 rounded-md hover:bg-gray-100">
                 <div className="flex items-center"><span className={`px-5 py-2 mr-2 text-white capitalize ${tx.type === 'reward' ? 'bg-green-600' : tx.type === 'fee' ? 'bg-yellow-600' : 'bg-gray-600'} rounded`}>{tx.type}</span> Transaction #{index+1}</div>
-                <div className="mt-1">Hash: {tx.hash}</div>
-                <div className="mt-1">Time: {fromnow(tx.hash)}</div>
-                {tx.type === 'reward' && <div className="mt-1">To: <span className="font-medium">{tx.data.outputs[0].address}</span> with amount <span className="text-green-700">+{tx.data.outputs[0].amount}</span></div>}
-                {tx.type === 'fee' && <div className="mt-1">Fee pay: <span className="font-medium">{tx.data.outputs[0].address}</span> with amount <span className="text-yellow-700">+{tx.data.outputs[0].amount}</span></div>}
-                {tx.type === 'regular' && <ul className="flex flex-col ml-12 ul">
-                  {tx.data.outputs.map(op => <li className="text-gray-700">To address : <span className="font-semibold">{op.address}</span> - amount : <span className="font-semibold">{op.amount}</span></li>)}
-                  </ul>}
+                <div className="mt-2">Hash: {tx.hash}</div>
+                <div className="mt-2">Time: {fromnow(tx.hash)}</div>
+                
+                <div className="flex w-full mt-2">
+                  <div className="flex flex-col flex-1">
+                    {tx.data.inputs.map(txin => <div className="flex w-full">
+
+                      <div className="truncate">{txin.address || "COINBASE ( NEW GENERATED COIN)"}</div>
+                      <div className="self-end flex-shrink-0 ml-auto">{txin.amount}</div>
+                    </div>)}
+
+                    {tx.data.inputs.length === 0 && <div className="text-green-500 truncate">{"COINBASE ( NEW GENERATED COIN)"}</div>
+                     
+                  }
+                    
+                  </div>  
+
+                  <ArrowRightIcon className="self-center w-8 h-8 mx-5 text-blue-600" />
+                  <div className="flex flex-col flex-1">
+                    {tx.data.outputs.map(txin => <div className="flex w-full">
+
+                      <div className="truncate">{txin.address}</div>
+                      <div className="self-end flex-shrink-0 ml-auto">{txin.amount}</div>
+                    </div>)}
+                    
+                  </div>  
+               </div>
+                  
             </div>)}
             {/* 
             <div className="flex w-full mt-6">
@@ -80,7 +102,7 @@ export default function Block({ data }) {
 
            
           </div>
-          <div className="flex flex-col mt-16 mb-16">
+          <div className="flex flex-col mb-16 mt-26">
             <div className="flex items-center justify-between">
               <span className="text-xl font-medium text-gray-800">Latest Transactions</span>
               <button className="px-4 py-1 text-blue-600 border border-gray-300 rounded-lg">View All</button>

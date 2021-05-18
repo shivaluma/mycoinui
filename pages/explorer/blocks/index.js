@@ -7,7 +7,7 @@ export default function Explorer({ blocks }) {
   return (
     <div className="min-h-screen bg-white">
       <div>
-        <Header left />
+        <Header left isExplorer/>
         {/* {transactions.slice(0,8).map(tx => <div key={tx.hash} className="px-4 py-3 mt-2 mb-2 text-sm text-gray-600 break-all bg-gray-200 rounded-lg">
                 Hash : {tx.hash}
                 </div>) } */}

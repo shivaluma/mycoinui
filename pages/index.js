@@ -42,7 +42,7 @@ export default function Home() {
               <li>&bull; Sign & Verify Messages</li>
               
             </ul>
-            <button className="self-start mt-6 text-white">Access Now</button>
+            <Link href="/access-wallet"><button className="self-start mt-6 text-white">Access Now</button></Link>
           </div>
         </div>
       </div>

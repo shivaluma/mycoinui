@@ -30,11 +30,12 @@ const avatarStyle = {
 }
 
 const HeaderRight = ({ className }) => {
+  const { wallet } = useWallet()
   return (
     <div className="flex items-center h-full ml-auto">
-      <Link href="/explorer" className="mr-6">
+      <a href={"/explorer/wallet/" + wallet.address} className="mr-6" target="_blank">
         <span className="mr-6 font-light text-gray-800">Transaction History </span>
-      </Link>
+      </a>
       <div className="settings-container">
         <div className="" style={avatarStyle}></div>
       </div>
