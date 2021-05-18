@@ -1,8 +1,13 @@
 import fromnow from 'fromnow'
-import Header from '../components/Header'
-import instance from '../util/axios'
-export default function Explorer({ blocks, transactions }) {
-  console.log(transactions)
+import Header from '../../../components/Header'
+import instance from '../../../util/axios'
+import { useRouter } from 'next/router'
+
+export default function Walletss({ txs, balance }) {
+  
+  const router = useRouter()
+  const { id } = router.query
+  
   return (
     <div className="min-h-screen bg-white">
       <div>
@@ -15,11 +20,36 @@ export default function Explorer({ blocks, transactions }) {
         <div className="container">
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
-              <span className="text-xl font-medium text-gray-800">Latest Blocks</span>
-              <button className="px-4 py-1 text-blue-600 border border-gray-300 rounded-lg">View All</button>
+              <span className="text-xl font-medium text-gray-800">Address</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">The most recently mined blocks</span>
+            <span className="text-sm font-medium text-gray-600">Information of this wallet</span>
 
+            <div className="flex mt-4">
+              <div className="text-gray-600" style={{ width: "20%" }}>Address : </div>
+              <div className="text-gray-800">{id}</div>
+            </div>
+
+            <div className="flex mt-2">
+              <div className="text-gray-600" style={{ width: "20%" }}>Format : </div>
+              <div className="px-4 py-1 text-white bg-blue-400 rounded-md ring-2 ring-blue-600">Base58</div>
+            </div>
+
+
+            <div className="flex mt-2">
+              <div className="text-gray-600" style={{ width: "20%" }}>Transactions : </div>
+              <div className="text-gray-800">{txs.length}</div>
+            </div>
+           
+
+           
+
+            <div className="flex mt-2">
+              <div className="text-gray-600" style={{ width: "20%" }}>Balance : </div>
+              <div className="text-gray-800">{balance}</div>
+            </div>
+
+           
+            {/* 
             <div className="flex w-full mt-6">
               <div className="text-sm text-gray-500" style={{ width: "18%" }}>Height</div>
               <div className="text-sm text-gray-500" style={{ width: "25%" }}>Mined</div>
@@ -52,7 +82,7 @@ export default function Explorer({ blocks, transactions }) {
               <div className="text-sm text-gray-800" style={{ width: "25%" }}>{fromnow(Number(tx.time) * 1000)}</div>
               <div className="text-sm text-gray-800 break-all" style={{ width: "25%" }}>{tx.data.inputs.reduce((prev, cur) => prev.amount > Number(cur.amount) ? prev : cur, {amount: 0}).amount}</div>
               <div className="text-sm text-gray-800" style={{ width: "10%" }}>{tx.type}</div>
-            </div>)}
+            </div>)} */}
           </div>
         </div>
       </div>
@@ -61,9 +91,16 @@ export default function Explorer({ blocks, transactions }) {
 }
 
 
-Explorer.getInitialProps = async () => {
-  const { data } = await instance.get('blockchain/blocks')
-  const {data : tdata} = await instance.get('blockchain/transactions')
-  
-  return { blocks: data.slice(Math.max(data.length - 8, 0)).reverse(), transactions :  tdata.slice(Math.max(tdata.length - 8, 0)).reverse()}
+// Explorer.getInitialProps = async () => {
+//   const { data } = await instance.get('blockchain/blocks')
+//   const {data : tdata} = await instance.get('blockchain/transactions')
+
+//   return { blocks: data.slice(Math.max(data.length - 8, 0)).reverse(), transactions :  tdata.slice(Math.max(tdata.length - 8, 0)).reverse()}
+// }
+
+
+Walletss.getInitialProps = async (ctx) => {
+  const { data:txs } = await instance.get('blockchain/transactions?address=' + ctx.query.id)
+  const { data: {balance} } = await instance.get('operator/' + ctx.query.id + '/balance')
+  return { txs , balance}
 }
