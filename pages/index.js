@@ -40,7 +40,6 @@ export default function Home() {
             <ul className="mt-2 text-xs font-semibold text-white">
               <li>&bull; Send and Swap Tokens</li>
               <li>&bull; Sign & Verify Messages</li>
-              
             </ul>
             <Link href="/access-wallet"><button className="self-start mt-6 text-white">Access Now</button></Link>
           </div>
